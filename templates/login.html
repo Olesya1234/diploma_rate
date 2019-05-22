@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+      <meta name="description" content="CoreUI - Open Source Bootstrap Admin Template">
+      <meta name="author" content="Łukasz Holeczek">
+      <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
+      <title>Diploma Rate</title>
+      <link href="/static/coreui-icons.css" rel="stylesheet">
+      <link href="/static/flag-icon.css" rel="stylesheet">
+      <link href="/static/font-awesome.css" rel="stylesheet">
+      <link href="/static/simple-line-icons.css" rel="stylesheet">
+      <link href="/static/style.css" rel="stylesheet">
+      <link href="/static/pace.css" rel="stylesheet">
+      <link href="/static/themify-icons/themify-icons.css" rel="stylesheet">
+      <style type="text/css">/* Chart.js */
+         @-webkit-keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}@keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}.chartjs-render-monitor{-webkit-animation:chartjs-render-animation 0.001s;animation:chartjs-render-animation 0.001s;}
+      </style>
+   </head>
+   <body class="app flex-row align-items-center">
+       <div class="container">
+          <div class="row justify-content-center">
+             <div class="col-md-6">
+                <div class="card-group">
+                   <div class="card p-4">
+                      <div class="card-body">
+                         <form class="form-horizontal" action="/login" method="post">
+                            {% csrf_token %}
+                             <input id="next" name="next" type="hidden" value="{{ next }}">
+                            <h1>Страница входа</h1>
+                            <p class="text-muted">Войдите в свой личный кабинет</p>
+                            <div class="input-group mb-3">
+                               <div class="input-group-prepend">
+                                  <span class="input-group-text">
+                                  <i class="ti-user"></i>
+                                  </span>
+                               </div>
+
+                                <input class="form-control{% if invalid %} is-invalid{% endif %}" type="text" placeholder="Логин" id="username" name="username">
+                            </div>
+                            <div class="input-group mb-4">
+                               <div class="input-group-prepend">
+                                  <span class="input-group-text">
+                                  <i class="ti-lock"></i>
+                                  </span>
+                               </div>
+                               <input class="form-control{% if invalid %} is-invalid{% endif %}" type="password" placeholder="Пароль" id="password" name="password">
+                               {% if invalid %}
+                               <div class="invalid-feedback">Username or password is invalid!</div>
+                               {% endif %}
+                            </div>
+
+                             <div class="row">
+                               <div class="col-6">
+                                  <button class="btn btn-primary px-4" type="submit">Войти</button>
+                               </div>
+                            </div>
+                         </form>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+      <script src="/static/jquery.js"></script>
+      <script src="/static/popper.js"></script>
+      <script src="/static/bootstrap.js"></script>
+      <script src="/static/pace.js"></script>
+      <script src="/static/perfect-scrollbar.js"></script>
+      <script src="/static/coreui.js"></script>
+      <script type="text/javascript" src="/static/Chart.js" class="view-script"></script>
+      <script type="text/javascript" src="/static/custom-tooltips.js" class="view-script"></script>
+      <script type="text/javascript" src="/static/main.js" class="view-script"></script>
+   </body>
+</html>

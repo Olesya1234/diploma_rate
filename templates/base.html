@@ -8,7 +8,7 @@
       <meta name="description" content="CoreUI - Open Source Bootstrap Admin Template">
       <meta name="author" content="Łukasz Holeczek">
       <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
-      <title>Benchmark Verification</title>
+      <title>Diploma Rate</title>
       <link href="/static/coreui-icons.css" rel="stylesheet">
       <link href="/static/flag-icon.css" rel="stylesheet">
       <link href="/static/font-awesome.css" rel="stylesheet">
@@ -58,43 +58,13 @@
          <div class="sidebar">
             <nav class="sidebar-nav ps ps--active-y">
                <ul class="nav">
+                  {% for group in groups %}
                   <li class="nav-item">
-                     <a class="nav-link" href="/run">
-                     <i class="nav-icon ti-target text-light"></i>Run</a>
+                     <a class="nav-link" href="/cabinet/commission/group/{{ group.id }}">
+                     <i class="nav-icon text-light"></i>{{ group.name }}</a>
                   </li>
-                  <li class="nav-item nav-dropdown">
-                     <div class="nav-link nav-dropdown-toggle">
-                     <i class="nav-icon ti-panel text-light"></i>Configuration
-                     </div>
-                     <ul class="nav-dropdown-items">
-                          <li class="nav-item">
-                              <div><a href="/task/table" class="nav-link">Configuration Table</a></div>
-                          </li>
-                          <li class="nav-item">
-                              <div><a href="/task/create" class="nav-link">Create Configuration</a></div>
-                          </li>
-                      </ul>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link" href="/scan/results">
-                     <i class="nav-icon ti-pie-chart text-light"></i>Results</a>
-                  </li>
-                  <li class="nav-item nav-dropdown">
-                      <div class="nav-link nav-dropdown-toggle"><i class="nav-icon ti-ruler-pencil text-light"></i>Benchmarks</div>
-                      <ul class="nav-dropdown-items">
-                         {% for benchmark in benchmarks %}
-                          <li class="nav-item">
-                              <div><a href="/benchmark/about/{{benchmark.1}}" class="nav-link">{{ benchmark.0 }}</a></div>
-                          </li>
-                         {% endfor %}
-                      </ul>
-                  </li>
+                  {% endfor %}
 
-
-                  <!--<li class="nav-item">-->
-                     <!--<a class="nav-link" href="#">-->
-                     <!--<i class="nav-icon ti-settings text-light"></i>Settings</a>-->
-                  <!--</li>-->
                </ul>
                <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
                   <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
@@ -119,6 +89,7 @@
 
                {% block content %}
                {% endblock %}
+
             </div>
          </main>
       </div>

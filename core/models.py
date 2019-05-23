@@ -40,7 +40,7 @@ class Group(models.Model):
 
 
 class Student(models.Model):
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name='Группа')
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='students', verbose_name='Группа')
     fio = models.CharField(max_length=128, verbose_name='ФИО')
     diploma_name = models.CharField(max_length=128, verbose_name='Тема диплома')
 
@@ -54,6 +54,7 @@ class Student(models.Model):
 
 class Criterion(models.Model):
     name = models.CharField(max_length=64, verbose_name='Название')
+    weight = models.FloatField(default=1, verbose_name='Вес')
 
     class Meta:
         verbose_name = "Критерий"

@@ -15,12 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from core.views import index
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    url(r'^cabinet/commission/', include(('commission_cabinet.urls', 'commission_cabinet'), namespace='commission_cabinet')),
     url(r'^$', index),
 ]

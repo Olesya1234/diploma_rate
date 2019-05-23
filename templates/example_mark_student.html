@@ -1,103 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-   <head>
-      <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-      <meta name="description" content="CoreUI - Open Source Bootstrap Admin Template">
-      <meta name="author" content="Łukasz Holeczek">
-      <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
-      <title>Diploma Rate</title>
-      <link href="/static/coreui-icons.css" rel="stylesheet">
-      <link href="/static/flag-icon.css" rel="stylesheet">
-      <link href="/static/font-awesome.css" rel="stylesheet">
-      <link href="/static/simple-line-icons.css" rel="stylesheet">
-      <link href="/static/style.css" rel="stylesheet">
-      <link href="/static/pace.css" rel="stylesheet">
-      <link href="/static/themify-icons/themify-icons.css" rel="stylesheet">
-      <style type="text/css">/* Chart.js */
-         @-webkit-keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}@keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}.chartjs-render-monitor{-webkit-animation:chartjs-render-animation 0.001s;animation:chartjs-render-animation 0.001s;}
-      </style>
-   </head>
-   <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show   pace-done pace-done">
-      <div class="pace  pace-inactive pace-inactive">
-         <div class="pace-progress" style="transform: translate3d(100%, 0px, 0px);" data-progress-text="100%" data-progress="99">
-            <div class="pace-progress-inner"></div>
-         </div>
-         <div class="pace-activity"></div>
-      </div>
-      <header class="app-header navbar">
-         <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
-         <span class="navbar-toggler-icon"></span>
-         </button>
-         <a class="navbar-brand" href="#">
-         <img class="navbar-brand-full" src="/static/logo.svg" alt="CoreUI Logo" width="89"
-              height="25">
-         <img class="navbar-brand-minimized" src="/static/sygnet.svg" alt="CoreUI Logo" width="30" height="30">
-         </a>
-         <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button" data-toggle="sidebar-lg-show">
-         <span class="navbar-toggler-icon"></span>
-         </button>
-         <ol class="nav navbar-nav">
-            {% for dir in dirs %}
-            <li class="breadcrumb-item">{{ dir }}</li>
-            {% endfor %}
-         </ol>
-         <ul class="nav navbar-nav ml-auto">
-            <li class="nav-item px-3">
-               [ {{ user.get_username }} ]
-            </li>
-            <li class="nav-item px-3">
-               <a class="nav-link" href="/logout">Logout</a>
-            </li>
+{% extends 'base.html' %}
+{% block content %}
 
-         </ul>
-      </header>
-      <div class="app-body">
-         <div class="sidebar">
-            <nav class="sidebar-nav ps ps--active-y">
-               <ul class="nav">
-                  <li class="nav-item">
-                     <a class="nav-link" href="/students/585-1">
-                     <i class="nav-icon text-light"></i>585-1</a>
-                  </li>
-                   <li class="nav-item">
-                     <a class="nav-link" href="/students/585-2">
-                     <i class="nav-icon text-light"></i>585-2</a>
-                  </li>
-
-               </ul>
-               <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
-                  <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
-               </div>
-               <div class="ps__rail-y" style="top: 0px; height: 666px; right: 0px;">
-                  <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 372px;"></div>
-               </div>
-            </nav>
-         </div>
-         <main class="main">
-            <div class="container-fluid">
-               {% if messages %}
-               &nbsp
-               {% for message in messages%}
-               <div class="alert alert-{{ message.type }} alert-dismissible fade show" role="alert">
-                  <strong>{{ message.title }}</strong>
-                  {{ message.text }}
-	              <button class="close" type="button" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span> </button>
-               </div>
-               {% endfor %}
-               {% endif %}
-
-
-            <div id="ui-view">
-              <div>
-                 <div class="animated fadeIn">
-                     &nbsp;
-                     <div class="row">
-
-                        <div class="col-md-12 mb-4">
-
+<br>&#13;
 
 <div id="ui-view">
   <div>
@@ -108,40 +12,49 @@
                 <div class="card">
                     <div class="card-header">Выставление оценки</div>
                     <div class="card-body">
-                        Группа: 585-2<br>
-                        Студент: Герасимов Константин Александрович<br>
-                        Тема диплома: Разработка интернет магазина<br><br>
+                        Группа: {{ student.group.name }}<br>
+                        Студент: {{ student.fio }}<br>
+                        Тема диплома: {{ student.diploma_name }}<br><br>
+
+                        <hr align="center" width="100%" size="2" color="black" />
 
 
-                        <form class="form-horizontal" action="/task/create" method="post">
+                        <form class="form-horizontal" action="/cabinet/commission/mark/{{ student.id }}" method="post">
                             {% csrf_token %}
+                            {% for criterion in criteries %}
                             <div class="form-group row">
-                                <label class="col-md-10 col-form-label" for="name1">Критерий 1</label>
+                                <label class="col-md-10 col-form-label" for="c_{{ criterion.id }}">{{ criterion.name }}</label>
                                 <div class="col-md-1">
-                                    <input class="form-control" id="name1" type="text" name="name1"></div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-10 col-form-label" for="name2">Критерий 2</label>
-                                <div class="col-md-1">
-                                    <input class="form-control" id="name2" type="text" name="name2"></div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-10 col-form-label" for="name3">Критерий 3</label>
-                                <div class="col-md-1">
-                                    <input class="form-control" id="name3" type="text" name="name3"></div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-10 col-form-label" for="name4">Критерий 4</label>
-                                <div class="col-md-1">
-                                    <input class="form-control" id="name4" type="text" name="name4"></div>
-                            </div>
+                                    {% if criterion.value %}
+                                    <input class="form-control" id="c_{{ criterion.id }}" type="text"
+                                           name="c_{{ criterion.id }}" value="{{ criterion.value }}"
+                                           pattern="[2-5]" required>
+                                    {% else %}
+                                    <input class="form-control" id="c_{{ criterion.id }}" type="text"
+                                           name="c_{{ criterion.id }}" pattern="[2-5]" required>
+                                    {% endif %}
+                                </div>
 
-                            <br>
+                            </div>
+                            {% endfor %}
+
+                        <hr align="center" width="100%" size="2" color="black" />
 
                             <div class="form-group row">
-                                <label class="col-md-10 col-form-label" for="name5"><b>Итоговая оценка</b></label>
+                                {% if av_mark %}
+                                <label class="col-md-10 col-form-label" for="final"><b>Итоговая оценка</b>
+                                    (ср. балл с учетом весов {{ av_mark }})
+                                </label>
+                                {% else %}
+                                <label class="col-md-10 col-form-label" for="final"><b>Итоговая оценка</b></label>
+                                {% endif %}
                                 <div class="col-md-1">
-                                    <input class="form-control" id="name5"  value=name1+name2+name3+name4</div>
+                                    {% if final_mark %}
+                                    <input class="form-control" id="final" name="final" value="{{ final_mark }}"  pattern="[2-5]">
+                                    {% else %}
+                                    <input class="form-control" id="final" name="final" pattern="[2-5]">
+                                    {% endif %}
+                                </div>
                             </div>
 
                             <center>
@@ -157,28 +70,4 @@
   </div>
 </div>
 
-
-
-
-                        </div>
-                     </div>
-                 </div>
-              </div>
-            </div>
-
-
-            </div>
-         </main>
-      </div>
-
-      <script src="/static/jquery.js"></script>
-      <script src="/static/popper.js"></script>
-      <script src="/static/bootstrap.js"></script>
-      <script src="/static/pace.js"></script>
-      <script src="/static/perfect-scrollbar.js"></script>
-      <script src="/static/coreui.js"></script>
-      <script type="text/javascript" src="/static/Chart.js" class="view-script"></script>
-      <script type="text/javascript" src="/static/custom-tooltips.js" class="view-script"></script>
-      <script type="text/javascript" src="/static/main.js" class="view-script"></script>
-   </body>
-</html>
+{% endblock %}

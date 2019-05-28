@@ -1,0 +1,48 @@
+{% extends 'chairman_base.html' %}
+{% block content %}
+
+            <div id="ui-view">
+              <div>
+                 <div class="animated fadeIn">
+                     &nbsp;
+                     <div class="row">
+
+                        <div class="col-md-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">Студенты {{ group_name }} группы</div>
+                                <div class="card-body">
+                                    <table class="table table-responsive-sm">
+                                        <thead>
+                                          <tr>
+                                             <th>#</th>
+                                             <th>ФИО</th>
+                                             <th>Тема</th>
+                                             <th><center>Оценка</center></th>
+                                             <th>Редактировать</th>
+                                          </tr>
+                                       </thead>
+                                       <tbody>
+                                          {% for student in students %}
+                                          <tr>
+                                             <td>{{ forloop.counter }}</td>
+                                             <td>{{ student.fio }}</td>
+                                             <td>{{ student.diploma_name }}</td>
+                                             <td><center>{{ student.mark }}</center></td>
+                                             <td>
+                                                 <a href="/cabinet/chairman/student/{{ student.id }}">
+                                                    <i class="nav-icon ti-pencil"></i>
+                                                 </a></td>
+                                          </tr>
+                                          {% endfor %}
+
+                                       </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                 </div>
+              </div>
+            </div>
+
+{% endblock %}

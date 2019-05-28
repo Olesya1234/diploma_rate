@@ -18,7 +18,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     fio = models.CharField(max_length=128, verbose_name='ФИО')
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, verbose_name='Роль')
-    degree = models.CharField(max_length=32, verbose_name='Науч. степень')
+    degree = models.CharField(max_length=32, blank=True, null=True, verbose_name='Науч. степень')
 
     class Meta:
         verbose_name = "Профиль"
@@ -53,7 +53,7 @@ class Student(models.Model):
 
 
 class Criterion(models.Model):
-    name = models.CharField(max_length=64, verbose_name='Название')
+    name = models.CharField(max_length=256, verbose_name='Название')
     weight = models.FloatField(default=1, verbose_name='Вес')
 
     class Meta:

@@ -17,11 +17,16 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
 
-from core.views import index
+from core.views import index, login_view, logout_view
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^cabinet/commission/', include(('commission_cabinet.urls', 'commission_cabinet'), namespace='commission_cabinet')),
+    url(r'^cabinet/commission/', include(('commission_cabinet.urls', 'commission_cabinet'),
+                                         namespace='commission_cabinet')),
+    url(r'^cabinet/chairman/', include(('chairman_cabinet.urls', 'chairman_cabinet'),
+                                         namespace='chairman_cabinet')),
     url(r'^$', index),
+    url(r'^login$', login_view),
+    url(r'^logout$', logout_view)
 ]

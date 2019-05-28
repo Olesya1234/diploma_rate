@@ -1,0 +1,74 @@
+{% extends 'chairman_base.html' %}
+{% block content %}
+
+            <div id="ui-view">
+              <div>
+                 <div class="animated fadeIn">
+                     &nbsp;
+                     <div class="row">
+
+                        <div class="col-md-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">Выставление оценки</div>
+                                <div class="card-body">
+                                    Группа: {{ student.group.name }}<br>
+                                    Студент: {{ student.fio }}<br>
+                                    Тема диплома: {{ student.diploma_name }}<br><br>
+
+                                    <table class="table table-responsive-sm">
+                                        <thead>
+                                          <tr>
+                                             <th>#</th>
+                                             <th>Член комисии</th>
+                                             <th>Оценка</th>
+                                          </tr>
+                                       </thead>
+                                       <tbody>
+                                          {% for commission in commissions %}
+                                          <tr>
+                                             <td>{{ forloop.counter }}</td>
+                                             <td>{{ commission.commission_str }}</td>
+                                             <td>&nbsp;&nbsp;&nbsp;&nbsp;{{ commission.mark }}</td>
+                                          </tr>
+                                          {% endfor %}
+
+                                       </tbody>
+                                    </table>
+
+                                    <form class="form-horizontal" action="/cabinet/chairman/mark/{{ student.id }}" method="post">
+                                        {% csrf_token %}
+
+{#                                        <hr align="center" width="100%" size="2" color="black" />#}
+
+                                        <div class="form-group row">
+                                            {% if av_mark %}
+                                            <label class="col-md-10 col-form-label" for="final"><b>Итоговая оценка</b>
+                                                (ср. балл {{ av_mark }})
+                                            </label>
+                                            {% else %}
+                                            <label class="col-md-10 col-form-label" for="final"><b>Итоговая оценка</b></label>
+                                            {% endif %}
+                                            <div class="col-md-1">
+                                                {% if final_mark %}
+                                                <input class="form-control" id="final" name="final" value="{{ final_mark }}"  pattern="[2-5]" required>
+                                                {% else %}
+                                                <input class="form-control" id="final" name="final" pattern="[2-5]" required>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <center>
+                                            <button class="btn btn-primary" type="submit">Сохранить</button>
+                                        </center>
+
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                 </div>
+              </div>
+            </div>
+
+{% endblock %}

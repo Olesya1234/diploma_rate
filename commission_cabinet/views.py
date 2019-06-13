@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import Http404
 
-from core.models import Group, Student, CommissionMark, MapMarkCriterion, Criterion
+from core.models import Group, Student, CommissionMark, MapMarkCriterion, Criterion, CriterionRanking
 from core.views import check_perm
 
 
@@ -122,3 +122,60 @@ def take_mark(request, student_id):
             MapMarkCriterion.objects.create(commission_mark=cm, criterion=cr['criterion'], criterion_mark=cr['mark'])
 
     return redirect('/cabinet/commission/student/{}'.format(student_id))
+
+
+@check_perm('commission')
+def kriterions(request):
+    crits = Criterion.objects.all()
+
+    cr_ranks = CriterionRanking.objects.filter(comission=request.user.profile)
+
+    crits = [
+        {
+            'obj': x,
+            'rank': cr_ranks.filter(criterion=x).first() if cr_ranks.filter(criterion=x) else None
+        } for x in crits
+    ]
+
+    if request.method == 'GET':
+        data = {
+            'groups': Group.objects.all(),
+            'criteries': crits,
+            'len_crit': len(crits)
+        }
+        return render(request, 'commission_krits.html', data)
+
+    crits = dict()
+
+    for cr in Criterion.objects.all():
+        crit_rank = request.POST.get('c_{}'.format(cr.id))
+        crits[cr.id] = {
+            'criterion': cr,
+            'rank': crit_rank
+        }
+
+    all_ranks = {x['rank'] for x in crits.values()}
+    k = 1
+    for rank in sorted(all_ranks):
+        if int(rank) != k:
+            print('Недопустимые критерии')
+            print(rank, k)
+            return redirect('/cabinet/commission/crits')
+        k += 1
+
+    if len(all_ranks) != len(crits):
+        print('Заполнены не все критерии')
+        data = {
+            'groups': Group.objects.all(),
+            'criteries': crits,
+            'len_crit': len(crits),
+        }
+        return render(request, 'commission_krits.html', data)
+
+    if cr_ranks:
+        cr_ranks.delete()
+
+    for i, cr in crits.items():
+        CriterionRanking.objects.create(comission=request.user.profile, criterion=cr['criterion'], rank=cr['rank'])
+
+    return redirect('/cabinet/commission/crits')

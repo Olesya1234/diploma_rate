@@ -47,6 +47,7 @@ def mark_form(request, student_id):
     commission_marks = {cm.comission.id: cm.mark for cm in CommissionMark.objects.filter(student=student)}
 
     av_mark = sum(mark for mark in commission_marks.values())/len(commission_marks) if commission_marks else None
+    av_mark = round(av_mark, 2) if av_mark else None
 
     commission_dicts = [
         {
@@ -87,7 +88,7 @@ def take_mark(request, student_id):
     final_mark_objs = FinalMark.objects.filter(student=student, chairman=request.user.profile)
 
     if final_mark_objs:
-        final_mark_objs.first().update(mark=mark)
+        final_mark_objs.update(mark=mark)
     else:
         FinalMark.objects.create(student=student, chairman=request.user.profile, mark=mark)
 

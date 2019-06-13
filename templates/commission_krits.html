@@ -1,0 +1,53 @@
+{% extends 'commission_base.html' %}
+{% block content %}
+
+<br>&#13;
+
+<div id="ui-view">
+  <div>
+     <div class="animated fadeIn">
+         <div class="row">
+
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-header">Ранжировка критериев</div>
+                    <div class="card-body">
+                        Проставьте ранжировки критериев! <br>
+                        От 1 до {{ len_crit }}, где 1 - самый важный критерий
+
+
+                        <hr align="center" width="100%" size="2" color="black" />
+
+                        <form class="form-horizontal" action="/cabinet/commission/crits" method="post">
+                            {% csrf_token %}
+                            {% for criterion in criteries %}
+                            <div class="form-group row">
+                                <label class="col-md-10 col-form-label" for="c_{{ criterion.obj.id }}">{{ criterion.obj.name }}</label>
+                                <div class="col-md-1">
+                                    {% if criterion.rank %}
+                                    <input class="form-control" id="c_{{ criterion.obj.id }}" type="text"
+                                           name="c_{{ criterion.obj.id }}" value="{{ criterion.rank.rank }}"
+                                           pattern="\d+" required>
+                                    {% else %}
+                                    <input class="form-control" id="c_{{ criterion.obj.id }}" type="text"
+                                           name="c_{{ criterion.obj.id }}" pattern="\d+" required>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                            {% endfor %}
+
+                            <center>
+                                <button class="btn btn-primary" type="submit" >Сохранить</button>
+                            </center>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+         </div>
+     </div>
+  </div>
+</div>
+
+{% endblock %}

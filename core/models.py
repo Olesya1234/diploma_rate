@@ -101,3 +101,14 @@ class MapMarkCriterion(models.Model):
 
     def __str__(self):
         return 'Critetion {}'.format(self.id)
+
+
+class CriterionRanking(models.Model):
+    criterion = models.ForeignKey(Criterion, on_delete=models.CASCADE, verbose_name='Критерий')
+    comission = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name='Член комиссии')
+    rank = models.PositiveSmallIntegerField(verbose_name='Ранжировка')
+
+    class Meta:
+        verbose_name = "Ранжировка критерия"
+        verbose_name_plural = "Ранжировки критериев"
+        unique_together = (('criterion', 'comission'))

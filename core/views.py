@@ -8,7 +8,7 @@ from core.models import Group
 
 
 def index(request):
-    if not request.user.profile or not request.user.is_authenticated:
+    if not request.user.is_authenticated or not request.user.profile:
         return redirect('/login')
 
     groups = Group.objects.all()

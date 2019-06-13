@@ -36,3 +36,8 @@ class FinalMarkAdmin(admin.ModelAdmin):
 @admin.register(MapMarkCriterion)
 class MapMarkCriterionAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(CriterionRanking)
+class CriterionRankingAdmin(admin.ModelAdmin):
+    pass

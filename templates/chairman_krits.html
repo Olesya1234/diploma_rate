@@ -1,0 +1,75 @@
+{% extends 'chairman_base.html' %}
+{% block content %}
+
+            <div id="ui-view">
+              <div>
+                 <div class="animated fadeIn">
+                     &nbsp;
+                     <div class="row">
+
+                        <div class="col-md-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">Подсчет весов критериев</div>
+                                <div class="card-body">
+                                    <b>Члены коммиссии:</b><br>
+                                    {% for comm in commissions %}
+                                        ЧК{{ comm.i }} - {{ comm.obj.fio }}<br>
+                                    {% endfor %}
+                                    <br>
+                                    <b>Критерии:</b><br>
+                                    {% for crit in crits %}
+                                        КРИТ{{ crit.i }} - {{ crit.obj.name }}<br>
+                                    {% endfor %}
+                                    <br>
+                                    <br>
+
+                                    <table class="table table-responsive-sm">
+                                        <thead>
+                                          <tr>
+                                             <th></th>
+                                              {% for comm in commissions %}
+                                             <th>ЧК{{ comm.i}}</th>
+                                              {% endfor %}
+                                             <th>Текущий вес</th>
+                                             <th>Посчитанный вес</th>
+
+                                          </tr>
+                                       </thead>
+                                       <tbody>
+                                          {% for crit in crits %}
+                                          <tr>
+                                             <td>КРИТ{{ crit.i }}</td>
+                                              {% for rank in crit.ranks %}
+                                                  {% if rank != 0 %}
+                                                  <td>{{ rank }}</td>
+                                                  {% else %}
+                                                  <td>-</td>
+                                                  {% endif %}
+                                              {% endfor %}
+
+                                              <td>{{ crit.obj.weight }}</td>
+                                              <td>{{ crit.weight }}</td>
+
+                                          </tr>
+                                          {% endfor %}
+
+                                       </tbody>
+                                    </table>
+
+                                {% if W %}
+                                Коэффициент конкордации (W) = {{ W }}
+
+                                <br>
+
+                                <center><a class="btn btn-primary" href="/cabinet/chairman/change_weights" role="button">Заменить веса</a></center>
+                                {% endif %}
+
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                 </div>
+              </div>
+            </div>
+
+{% endblock %}

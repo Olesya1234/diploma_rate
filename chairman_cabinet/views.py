@@ -234,6 +234,6 @@ def print_to_pdf(request, group_id):
     pdf_file = whtml.write_pdf(stylesheets=[wcss])
 
     response = HttpResponse(pdf_file, content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="home_page.pdf"'
+    response['Content-Disposition'] = 'filename="student_mark_{}.pdf"'.format(group.name)
 
     return response

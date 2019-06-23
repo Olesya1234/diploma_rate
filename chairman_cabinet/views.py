@@ -11,10 +11,7 @@ from core.models import Group, FinalMark, Student, CommissionMark, Profile, Crit
     MapMarkCriterion
 from core.views import check_perm
 
-from io import BytesIO
 from django.http import HttpResponse
-from django.template.loader import get_template
-import xhtml2pdf.pisa as pisa
 
 
 @check_perm('chairman')

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Оценки {{ group_name }} группы</title>
+</head>
+<body>
+
+<article class="A4">
+    <p> Студенты {{ group_name }} группы </p>
+    <p> Дата печати: {{ date_print }} </p>
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th><center>ФИО</center></th>
+            <th>Оценка</th>
+          </tr>
+       </thead>
+       <tbody>
+          {% for student in students %}
+          <tr>
+            <td>{{ student.counter }}&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td width="50%">{{ student.fio }}&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td><center>{{ student.final_mark }}</center></td>
+          </tr>
+          {% endfor %}
+
+       </tbody>
+    </table>
+</article>
+
+</body>
+</html>

@@ -1,11 +1,20 @@
 import numpy as np
+import jinja2
+import weasyprint
+from datetime import datetime
 
 from django.http import Http404
 from django.shortcuts import render, redirect
 
 from chairman_cabinet.calc_weight import calc_weights
-from core.models import Group, FinalMark, Student, CommissionMark, Profile, Criterion, CriterionRanking
+from core.models import Group, FinalMark, Student, CommissionMark, Profile, Criterion, CriterionRanking, \
+    MapMarkCriterion
 from core.views import check_perm
+
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+import xhtml2pdf.pisa as pisa
 
 
 @check_perm('chairman')
@@ -18,18 +27,17 @@ def student_table(request, group_id):
     group = groups.first()
     students = group.students.all()
 
-    chairman_marks = FinalMark.objects.filter(chairman=request.user.profile)
-    marks_dict = {mark.student.id: mark.mark for mark in chairman_marks}
-
     data = {
         'groups': Group.objects.all(),
         'group_name': group.name,
+        'group_id': group.id,
         'students': [
             {
                 'id': student.id,
                 'fio': student.fio,
                 'diploma_name': student.diploma_name,
-                'mark': marks_dict.get(student.id, '-')
+                'av_mark': student.calc_average_mark() if student.calc_average_mark() else '-',
+                'final_mark': student.calc_final_mark() if student.calc_final_mark() else '-'
             } for student in students
         ]
     }
@@ -46,30 +54,34 @@ def mark_form(request, student_id):
 
     student = students.first()
 
-    commissions = Profile.objects.filter(role=2)  # Только члены комиссии
-    commission_marks = {cm.comission.id: cm.mark for cm in CommissionMark.objects.filter(student=student)}
+    crits = MapMarkCriterion.objects.filter(commission_mark__student=student,
+                                            commission_mark__comission=request.user.profile)
 
-    av_mark = sum(mark for mark in commission_marks.values())/len(commission_marks) if commission_marks else None
-    av_mark = round(av_mark, 2) if av_mark else None
+    crits_dict = {cr.criterion.id: cr.criterion_mark for cr in crits}
 
-    commission_dicts = [
-        {
-            'commission_str': commission.fio + (', {}'.format(commission.degree) if commission.degree else ''),
-            'mark': commission_marks.get(commission.id, '-')
-        } for commission in commissions
-    ]
+    final_mark = CommissionMark.objects.filter(student=student, comission=request.user.profile)
+    final_mark = final_mark.first().mark if final_mark else None
 
-    final_mark_objs = FinalMark.objects.filter(student=student, chairman=request.user.profile)
+    print(crits_dict)
 
-    if final_mark_objs:
-        final_mark = final_mark_objs.first().mark
+    if crits:
+        sum_weights = sum(cr.criterion.weight for cr in crits)
+        av_mark = '{:0<4}'.format(round(sum(cr.criterion.weight * cr.criterion_mark for cr in crits)/sum_weights, 2))
     else:
-        final_mark = None
+        av_mark = None
+
+    criteries = [
+        {
+            'id': crit.id,
+            'name': crit.name,
+            'value': crits_dict.get(crit.id)
+        } for crit in Criterion.objects.all()
+    ]
 
     data = {
         'groups': Group.objects.all(),
         'student': student,
-        'commissions': commission_dicts,
+        'criteries': criteries,
         'final_mark': final_mark,
         'av_mark': av_mark
     }
@@ -190,3 +202,41 @@ def change_weights(request):
         crit.save()
 
     return redirect('/cabinet/chairman/crits')
+
+
+def print_to_pdf(request, group_id):
+    groups = Group.objects.filter(pk=group_id)
+
+    if not groups:
+        raise Http404('Group is not found')
+
+    group = groups.first()
+    students = group.students.all()
+
+    data = {
+        'group_name': group.name,
+        'date_print': datetime.now().strftime("%d.%m.%Y"),
+        'students': [
+            {
+                'counter': i,
+                'fio': student.fio,
+                'final_mark': student.calc_final_mark() if student.calc_final_mark() else '-'
+            } for i, student in enumerate(students, 1)
+        ]
+    }
+
+    env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader('templates'),
+        autoescape=jinja2.select_autoescape(['html', 'xml'])
+    )
+
+    template = env.get_template('pdf_template.html')
+    whtml = weasyprint.HTML(string=template.render(data).encode('utf8'))
+    wcss = weasyprint.CSS(filename='./templates/style.css')
+
+    pdf_file = whtml.write_pdf(stylesheets=[wcss])
+
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="home_page.pdf"'
+
+    return response

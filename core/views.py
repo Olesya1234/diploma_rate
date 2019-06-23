@@ -41,8 +41,12 @@ def check_perm(role_str):
             if not request.user.profile:
                 return logout_view(request)
 
-            if role_d.get(role_str) != request.user.profile.role:
-                raise PermissionDenied()
+            if isinstance(role_str, list):
+                if not any(role_d.get(x) == request.user.profile.role for x in role_str):
+                    raise PermissionDenied()
+            else:
+                if role_d.get(role_str) != request.user.profile.role:
+                    raise PermissionDenied()
 
             return func(*args, **kwargs)
 

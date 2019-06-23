@@ -16,7 +16,7 @@ def student_table(request, group_id):
     students = group.students.all()
 
     commission_marks = CommissionMark.objects.filter(comission=request.user.profile)
-    marks_dict = {mark.student.id: mark.mark for mark in commission_marks}
+    marks_dict = {mark.student.id: mark.calc_average_mark() for mark in commission_marks}
 
     data = {
         'groups': Group.objects.all(),
@@ -26,7 +26,7 @@ def student_table(request, group_id):
                 'id': student.id,
                 'fio': student.fio,
                 'diploma_name': student.diploma_name,
-                'mark': marks_dict.get(student.id, '-')
+                'mark': '{:0<4}'.format(marks_dict.get(student.id)) if marks_dict.get(student.id) else '-'
             } for student in students
         ]
     }
@@ -55,7 +55,7 @@ def mark_form(request, student_id):
 
     if crits:
         sum_weights = sum(cr.criterion.weight for cr in crits)
-        av_mark = round(sum(cr.criterion.weight * cr.criterion_mark for cr in crits)/sum_weights, 2)
+        av_mark = '{:0<4}'.format(round(sum(cr.criterion.weight * cr.criterion_mark for cr in crits)/sum_weights, 2))
     else:
         av_mark = None
 
@@ -78,7 +78,7 @@ def mark_form(request, student_id):
     return render(request, 'commission_mark_student.html', data)
 
 
-@check_perm('commission')
+@check_perm(['chairman', 'commission'])
 def take_mark(request, student_id):
     students = Student.objects.filter(pk=student_id)
 
@@ -102,11 +102,8 @@ def take_mark(request, student_id):
             'mark': crit_mark
         }
 
-    final_mark = request.POST.get('final')
-
-    if not final_mark:
-        sum_weights = sum(cr['criterion'].weight for i, cr in crits.items())
-        final_mark = round(sum(cr['criterion'].weight * int(cr['mark']) for i, cr in crits.items()) / sum_weights)
+    sum_weights = sum(cr['criterion'].weight for i, cr in crits.items())
+    final_mark = round(sum(cr['criterion'].weight * int(cr['mark']) for i, cr in crits.items()) / sum_weights)
 
     if real_final_mark:
         real_final_mark.update(mark=final_mark)
@@ -121,7 +118,10 @@ def take_mark(request, student_id):
         else:
             MapMarkCriterion.objects.create(commission_mark=cm, criterion=cr['criterion'], criterion_mark=cr['mark'])
 
-    return redirect('/cabinet/commission/student/{}'.format(student_id))
+    if request.user.profile.role == 1:
+        return redirect('/cabinet/chairman/student/{}'.format(student_id))
+    else:
+        return redirect('/cabinet/commission/student/{}'.format(student_id))
 
 
 @check_perm('commission')

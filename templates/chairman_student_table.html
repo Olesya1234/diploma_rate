@@ -11,13 +11,15 @@
                             <div class="card">
                                 <div class="card-header">Студенты {{ group_name }} группы</div>
                                 <div class="card-body">
+
                                     <table class="table table-responsive-sm">
                                         <thead>
                                           <tr>
                                              <th>#</th>
                                              <th>ФИО</th>
                                              <th>Тема</th>
-                                             <th><center>Оценка</center></th>
+                                             <th><center>Аддитивная оценка</center></th>
+                                             <th><center>Итоговая оценка</center></th>
                                              <th>Редактировать</th>
                                           </tr>
                                        </thead>
@@ -27,7 +29,8 @@
                                              <td>{{ forloop.counter }}</td>
                                              <td>{{ student.fio }}</td>
                                              <td>{{ student.diploma_name }}</td>
-                                             <td><center>{{ student.mark }}</center></td>
+                                             <td><center>{{ student.av_mark }}</center></td>
+                                             <td><center>{{ student.final_mark }}</center></td>
                                              <td>
                                                  <a href="/cabinet/chairman/student/{{ student.id }}">
                                                     <i class="nav-icon ti-pencil"></i>
@@ -37,6 +40,11 @@
 
                                        </tbody>
                                     </table>
+                                    <center>
+                                    <a class="btn btn-primary" href="/cabinet/chairman/group/print/{{ group_id }}" role="button">Печать
+                                    <i class="nav-icon ti-printer"></i>
+                                    </a>
+                                    </center>
                                 </div>
                             </div>
                         </div>

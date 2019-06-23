@@ -51,6 +51,17 @@ class Student(models.Model):
     def __str__(self):
         return self.fio
 
+    def calc_average_mark(self):
+        marks = self.marks.all()
+
+        if not marks:
+            return None
+
+        return round(sum(mark.calc_average_mark() for mark in marks)/len(marks), 2)
+
+    def calc_final_mark(self):
+        return round(self.calc_average_mark()) if self.calc_average_mark() else None
+
 
 class Criterion(models.Model):
     name = models.CharField(max_length=256, verbose_name='Название')
@@ -65,7 +76,7 @@ class Criterion(models.Model):
 
 
 class CommissionMark(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name='Студент')
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='marks', verbose_name='Студент')
     comission = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name='Член комиссии')
     mark = models.PositiveSmallIntegerField(choices=MARK_CHOICES)
 
@@ -75,6 +86,22 @@ class CommissionMark(models.Model):
 
     def __str__(self):
         return '[{}] {} {}'.format(self.id, self.student, self.comission)
+
+    def calc_average_mark(self):
+        crits = self.criteries.all()
+
+        if not crits:
+            return None
+
+        crit_mark_sum = 0
+        weight_sum = 0
+
+        for crit in crits:
+            crit_weight = crit.criterion.weight
+            crit_mark_sum += crit.criterion_mark * crit_weight
+            weight_sum += crit_weight
+
+        return round(crit_mark_sum / weight_sum, 2)
 
 
 class FinalMark(models.Model):
@@ -91,7 +118,8 @@ class FinalMark(models.Model):
 
 
 class MapMarkCriterion(models.Model):
-    commission_mark = models.ForeignKey(CommissionMark, on_delete=models.CASCADE, verbose_name='Оценка комиссии')
+    commission_mark = models.ForeignKey(CommissionMark, on_delete=models.CASCADE, related_name='criteries',
+                                        verbose_name='Оценка комиссии')
     criterion = models.ForeignKey(Criterion, on_delete=models.CASCADE, verbose_name='Критерий')
     criterion_mark = models.PositiveSmallIntegerField(choices=MARK_CHOICES)
 

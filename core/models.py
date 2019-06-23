@@ -57,7 +57,7 @@ class Student(models.Model):
         if not marks:
             return None
 
-        return round(sum(mark.calc_average_mark() for mark in marks)/len(marks), 2)
+        return round(sum(mark.calc_average_mark() for mark in marks if mark.calc_average_mark())/len(marks), 2)
 
     def calc_final_mark(self):
         return round(self.calc_average_mark()) if self.calc_average_mark() else None
